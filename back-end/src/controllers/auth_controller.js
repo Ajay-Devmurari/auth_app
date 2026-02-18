@@ -11,7 +11,7 @@ async function signup(req, res) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    // 1. Check if user exists using .length
+  
     const userCheck = await db.query(
       "SELECT * FROM users WHERE username = $1",
       [username],
@@ -21,7 +21,6 @@ async function signup(req, res) {
       return res.status(400).json({ message: "User already exists" });
     }
 
-    // 2. Added await here
     const hashedPassword = await bcrypt.hash(password, 10);
 
     await db.query("INSERT INTO users(username, password) VALUES($1, $2)", [
@@ -60,7 +59,7 @@ async function login(req, res) {
 
     const user = result.rows[0];
 
-    // bcrypt.compare is correctly awaited!
+  
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
@@ -68,7 +67,6 @@ async function login(req, res) {
     }
 
     delete user.password
-
     return res.json({
       message: "Login successfully",
       user,
